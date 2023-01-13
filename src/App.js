@@ -7,11 +7,21 @@ import useHttp from './hooks/use-http';
 function App() {
   const [tasks, setTasks] = useState([]);
 
-  useHttp({url: 'https://react-http-9c568-default-rtdb.europe-west1.firebasedatabase.app/tasks.json'});
+  const transformTasks = (task) => {
+    const loadedTasks = [];
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  
+      for (const taskKey in task) {
+        loadedTasks.push({ id: taskKey, text: task[taskKey].text });
+      }
+
+      setTasks(loadedTasks);
+  }
+
+  const httpData = useHttp({
+    url: 'https://react-http-9c568-default-rtdb.europe-west1.firebasedatabase.app/tasks.json'},
+    transformTasks);
+
+  const { isLoading, error, sendRequest: fetchTasks } = httpData;   // destructuring the returned properties in use-http
 
   /* const fetchTasks = async (taskText) => {
     setIsLoading(true);
