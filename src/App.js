@@ -17,11 +17,9 @@ function App() {
       setTasks(loadedTasks);
   }
 
-  const httpData = useHttp({
+  const  { isLoading, error, sendRequest: fetchTasks } = useHttp({                // destructuring the returned properties in use-http
     url: 'https://react-http-9c568-default-rtdb.europe-west1.firebasedatabase.app/tasks.json'},
-    transformTasks);
-
-  const { isLoading, error, sendRequest: fetchTasks } = httpData;   // destructuring the returned properties in use-http
+    transformTasks);  
 
   /* const fetchTasks = async (taskText) => {
     setIsLoading(true);
@@ -52,7 +50,7 @@ function App() {
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+  }, [fetchTasks]);
 
   const taskAddHandler = (task) => {
     setTasks((prevTasks) => prevTasks.concat(task));
