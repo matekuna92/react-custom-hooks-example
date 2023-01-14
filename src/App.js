@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 import Tasks from './components/Tasks/Tasks';
 import NewTask from './components/NewTask/NewTask';
@@ -7,7 +7,7 @@ import useHttp from './hooks/use-http';
 function App() {
   const [tasks, setTasks] = useState([]);
 
-  const transformTasks = (task) => {
+  const transformTasks = useCallback((task) => {
     const loadedTasks = [];
 
       for (const taskKey in task) {
@@ -15,41 +15,12 @@ function App() {
       }
 
       setTasks(loadedTasks);
-  }
+  }, []);
 
-  const  { isLoading, error, sendRequest: fetchTasks } = useHttp({                // destructuring the returned properties in use-http
-    url: 'https://react-http-9c568-default-rtdb.europe-west1.firebasedatabase.app/tasks.json'},
-    transformTasks);  
-
-  /* const fetchTasks = async (taskText) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(
-        'https://react-http-9c568-default-rtdb.europe-west1.firebasedatabase.app/tasks.json'
-      );
-
-      if (!response.ok) {
-        throw new Error('Request failed!');
-      }
-
-      const data = await response.json();
-
-      const loadedTasks = [];
-
-      for (const taskKey in data) {
-        loadedTasks.push({ id: taskKey, text: data[taskKey].text });
-      }
-
-      setTasks(loadedTasks);
-    } catch (err) {
-      setError(err.message || 'Something went wrong!');
-    }
-    setIsLoading(false);
-  }; */
+  const  { isLoading, error, sendRequest: fetchTasks } = useHttp(transformTasks);				// destructuring the returned properties in use-http
 
   useEffect(() => {
-    fetchTasks();
+    fetchTasks({ url: 'https://react-http-9c568-default-rtdb.europe-west1.firebasedatabase.app/tasks.json' });
   }, [fetchTasks]);
 
   const taskAddHandler = (task) => {
